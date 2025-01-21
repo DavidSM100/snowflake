@@ -266,7 +266,7 @@ func (l *SnowflakeListener) acceptSessions(ln *kcp.Listener) error {
 			0, // default resend
 			1, // nc=1 => congestion window off
 		)
-		if os.Getenv("SNOWFLAKE_TEST_KCP_FAST3MODE") == "1" {
+		if os.Getenv("SNOWFLAKE_TEST_KCP_FAST3MODE") != "0" {
 			conn.SetNoDelay(
 				1,
 				10,
