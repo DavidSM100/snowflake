@@ -7,12 +7,12 @@ import (
 	"gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake/v2/common/messages"
 	"io"
 	"log"
-	"net"
+	// "net"
 	"net/url"
 	"sync"
 	"time"
 
-	"github.com/pion/ice/v4"
+	// "github.com/pion/ice/v4"
 	"github.com/pion/transport/v3"
 	"github.com/pion/transport/v3/stdnet"
 	"github.com/pion/webrtc/v4"
@@ -20,7 +20,7 @@ import (
 	"gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake/v2/common/event"
 	"gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake/v2/common/proxy"
 	"gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake/v2/common/turbotunnel"
-	"gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake/v2/common/util"
+	// "gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake/v2/common/util"
 )
 
 // WebRTCPeer represents a WebRTC connection to a remote snowflake proxy.
@@ -283,16 +283,16 @@ func (c *WebRTCPeer) preparePeerConnection(
 	s := webrtc.SettingEngine{}
 
 	if !keepLocalAddresses {
-		s.SetIPFilter(func(ip net.IP) (keep bool) {
-			// `IsLoopback()` and `IsUnspecified` are likely not neded here,
-			// but let's keep them just in case.
-			// FYI there is similar code in other files in this project.
-			keep = !util.IsLocal(ip) && !ip.IsLoopback() && !ip.IsUnspecified()
-			return
-		})
-		s.SetICEMulticastDNSMode(ice.MulticastDNSModeDisabled)
+		// s.SetIPFilter(func(ip net.IP) (keep bool) {
+		// 	// `IsLoopback()` and `IsUnspecified` are likely not neded here,
+		// 	// but let's keep them just in case.
+		// 	// FYI there is similar code in other files in this project.
+		// 	keep = !util.IsLocal(ip) && !ip.IsLoopback() && !ip.IsUnspecified()
+		// 	return
+		// })
+		// s.SetICEMulticastDNSMode(ice.MulticastDNSModeDisabled)
 	}
-	s.SetIncludeLoopbackCandidate(keepLocalAddresses)
+	// s.SetIncludeLoopbackCandidate(keepLocalAddresses)
 
 	// Use the SetNet setting https://pkg.go.dev/github.com/pion/webrtc/v3#SettingEngine.SetNet
 	// to get snowflake working in shadow (where the AF_NETLINK family is not implemented).
@@ -309,7 +309,7 @@ func (c *WebRTCPeer) preparePeerConnection(
 		vnet = proxy.NewTransportWrapper(&socksClient, vnet)
 	}
 
-	s.SetNet(vnet)
+	// s.SetNet(vnet)
 	api := webrtc.NewAPI(webrtc.WithSettingEngine(s))
 	c.pc, err = api.NewPeerConnection(*config)
 	if err != nil {
@@ -345,9 +345,9 @@ func (c *WebRTCPeer) preparePeerConnection(
 		log.Println("WebRTC: DataChannel.OnClose")
 		c.Close()
 	})
-	dc.OnError(func(err error) {
-		c.eventsLogger.OnNewSnowflakeEvent(event.EventOnSnowflakeConnectionFailed{Error: err})
-	})
+	// dc.OnError(func(err error) {
+	// 	c.eventsLogger.OnNewSnowflakeEvent(event.EventOnSnowflakeConnectionFailed{Error: err})
+	// })
 	dc.OnMessage(func(msg webrtc.DataChannelMessage) {
 		if len(msg.Data) <= 0 {
 			log.Println("0 length message---")

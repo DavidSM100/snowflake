@@ -41,10 +41,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pion/ice/v4"
+	// "github.com/pion/ice/v4"
 
 	"github.com/gorilla/websocket"
-	"github.com/pion/transport/v3/stdnet"
+	// "github.com/pion/transport/v3/stdnet"
 	"github.com/pion/webrtc/v4"
 
 	"gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake/v2/common/consenthandshake"
@@ -415,39 +415,39 @@ func (sf *SnowflakeProxy) makeWebRTCAPI() *webrtc.API {
 	settingsEngine := webrtc.SettingEngine{}
 
 	if !sf.KeepLocalAddresses {
-		settingsEngine.SetIPFilter(func(ip net.IP) (keep bool) {
-			// `IsLoopback()` and `IsUnspecified` are likely not neded here,
-			// but let's keep them just in case.
-			// FYI there is similar code in other files in this project.
-			keep = !util.IsLocal(ip) && !ip.IsLoopback() && !ip.IsUnspecified()
-			return
-		})
+	// 	settingsEngine.SetIPFilter(func(ip net.IP) (keep bool) {
+	// 		// `IsLoopback()` and `IsUnspecified` are likely not neded here,
+	// 		// but let's keep them just in case.
+	// 		// FYI there is similar code in other files in this project.
+	// 		keep = !util.IsLocal(ip) && !ip.IsLoopback() && !ip.IsUnspecified()
+	// 		return
+	// 	})
 	}
-	settingsEngine.SetIncludeLoopbackCandidate(sf.KeepLocalAddresses)
+	// settingsEngine.SetIncludeLoopbackCandidate(sf.KeepLocalAddresses)
 
 	// Use the SetNet setting https://pkg.go.dev/github.com/pion/webrtc/v3#SettingEngine.SetNet
 	// to get snowflake working in shadow (where the AF_NETLINK family is not implemented).
 	// These two lines of code functionally revert a new change in pion by silently ignoring
 	// when net.Interfaces() fails, rather than throwing an error
-	vnet, _ := stdnet.NewNet()
-	settingsEngine.SetNet(vnet)
+	// vnet, _ := stdnet.NewNet()
+	// settingsEngine.SetNet(vnet)
 
 	if sf.EphemeralMinPort != 0 && sf.EphemeralMaxPort != 0 {
-		err := settingsEngine.SetEphemeralUDPPortRange(sf.EphemeralMinPort, sf.EphemeralMaxPort)
-		if err != nil {
-			log.Fatal("Invalid port range: min > max")
-		}
+		// err := settingsEngine.SetEphemeralUDPPortRange(sf.EphemeralMinPort, sf.EphemeralMaxPort)
+		// if err != nil {
+		// 	log.Fatal("Invalid port range: min > max")
+		// }
 	}
 
 	if sf.OutboundAddress != "" {
 		// replace SDP host candidates with the given IP without validation
 		// still have server reflexive candidates to fall back on
-		settingsEngine.SetNAT1To1IPs([]string{sf.OutboundAddress}, webrtc.ICECandidateTypeHost)
+		// settingsEngine.SetNAT1To1IPs([]string{sf.OutboundAddress}, webrtc.ICECandidateTypeHost)
 	}
 
-	settingsEngine.SetICEMulticastDNSMode(ice.MulticastDNSModeDisabled)
+	// settingsEngine.SetICEMulticastDNSMode(ice.MulticastDNSModeDisabled)
 
-	settingsEngine.SetDTLSInsecureSkipHelloVerify(true)
+	// settingsEngine.SetDTLSInsecureSkipHelloVerify(true)
 
 	return webrtc.NewAPI(webrtc.WithSettingEngine(settingsEngine))
 }
